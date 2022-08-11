@@ -46,9 +46,12 @@ const userController = {
   },
 
   createUser({ body }, res) {
-      User.create(body)
-        .then(dbUserData => res.json(dbUserData))
-        .catch(err => res.status(400).json(err));
+    User.create(body)
+      .then(dbUserData => res.json(dbUserData))
+      .catch(err => {
+        console.log(err);
+        res.status(400).json(err);
+      })
   },
 
   updateUser({ params, body }, res) {
@@ -76,7 +79,7 @@ const userController = {
     },
 
   addFriend({ params }, res) {
-    User.findOneAndUpdate({_id: params.id}, {$push: { friends: params.friendId}}, {new: true})
+    User.findOneAndUpdate({_id: params.userId}, {$push: { friends: params.friendId}}, {new: true})
     .then(dbUserData => {
       if (!dbUserData) {
           res.status(404).json({message: 'No user with that id.'});
@@ -88,7 +91,7 @@ const userController = {
   },
 
   deleteFriend({ params }, res) {
-    User.findOneAndUpdate({ _id: params.id}, {$pull: { friends: params.friendId}}, {new: true})
+    User.findOneAndUpdate({ _id: params.userId}, {$pull: { friends: params.friendId}}, {new: true})
     .then(dbUserData => {
         if(!dbUserData) {
             res.status(404).json({message: 'No User with that id.'});
@@ -102,4 +105,4 @@ const userController = {
 };
 
 
-module.exports = userController
+module.exports = userController;
